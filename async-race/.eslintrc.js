@@ -5,6 +5,8 @@ module.exports = {
   },
   extends: [
     'airbnb-base',
+    'airbnb-typescript/base',
+    'plugin:@typescript-eslint/recommended',
     'plugin:prettier/recommended',
     'prettier'
   ],
@@ -21,5 +23,32 @@ module.exports = {
     'class-methods-use-this': 'off',
     'no-use-before-define': ['error', { variables: false }],
     'prettier/prettier': 'error',
+    '@typescript-eslint/no-explicit-any': 'error',
+    '@typescript-eslint/array-type': [
+      'error',
+      {
+        'default': 'array'
+      }
+    ],
+    '@typescript-eslint/explicit-member-accessibility': [
+      'error',
+      {
+        'accessibility': 'explicit',
+        'overrides': {
+          'accessors': 'explicit',
+          'constructors': 'off',
+          'methods': 'explicit',
+          'properties': 'explicit',
+          'parameterProperties': 'explicit'
+        }
+      }
+    ],
+    'max-lines-per-function': [
+      'error',
+      40
+    ],
+    '@typescript-eslint/explicit-function-return-type': 'error',
+    '@typescript-eslint/no-unnecessary-type-assertion': 'error',
+    '@typescript-eslint/no-non-null-assertion': 'error'
   },
 };
