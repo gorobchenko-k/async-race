@@ -1,6 +1,9 @@
-import { createElement } from '../../../helpers';
-import { GARAGE_STYLE, GARAGE_TEXT } from './garage-const';
 import './garage.css';
+import { createElement } from '../../../helpers';
+import { GARAGE_STYLE, GARAGE_TEXT, LIMIT_PER_PAGE } from './garage-const';
+import { Pagination } from '../../pagination/pagination';
+import { getCarsAPI } from './garage-api';
+import { Car } from '../../car/car';
 
 class Garage {
   private numberOfCars = 0;
@@ -25,8 +28,11 @@ class Garage {
 
   private items = createElement('div', GARAGE_STYLE.items);
 
+  private pagination = new Pagination(LIMIT_PER_PAGE, this.currentPage, this.prevButton, this.nextButton);
+
   constructor() {
     this.createGarage();
+    this.setGarageContent();
   }
 
   public createGarage(): HTMLElement {
@@ -54,6 +60,23 @@ class Garage {
     inputColor.type = 'color';
     form.append(input, inputColor, button);
     return form;
+  }
+
+  private setGarageContent(): void {
+    getCarsAPI(this.pagination.currentPage, LIMIT_PER_PAGE).then(({ cars, numberOfCars }) => {
+      this.items.innerHTML = '';
+      cars.forEach((carData) => {
+        const car = new Car(carData.id, carData.name, carData.color);
+        this.items.append(car.element);
+      });
+      this.setNumberOfCars(numberOfCars);
+    });
+  }
+
+  private setNumberOfCars(numberOfCars: number): void {
+    this.numberOfCars = numberOfCars;
+    this.numberOfItems.textContent = `(${this.numberOfCars})`;
+    this.pagination.setNumberOfItems(this.numberOfCars);
   }
 }
 

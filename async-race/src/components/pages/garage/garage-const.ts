@@ -34,4 +34,6 @@ const GARAGE_TEXT = {
   nextButton: '>',
 };
 
-export { GARAGE_STYLE, GARAGE_TEXT };
+const LIMIT_PER_PAGE = 7;
+
+export { GARAGE_STYLE, GARAGE_TEXT, LIMIT_PER_PAGE };
