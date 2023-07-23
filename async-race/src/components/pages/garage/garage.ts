@@ -1,9 +1,10 @@
 import './garage.css';
 import { createElement, getElement } from '../../../helpers';
-import { GARAGE_STYLE, GARAGE_TEXT, LIMIT_PER_PAGE } from './garage-const';
+import { GARAGE_STYLE, GARAGE_TEXT, LIMIT_PER_PAGE, NUMBER_OF_GENERETED_CARS } from './garage-const';
 import { Pagination } from '../../pagination/pagination';
 import { getCarAPI, getCarsAPI, createCarAPI, updateCarAPI, deleteCarAPI } from './garage-api';
 import { Car } from '../../car/car';
+import { getRandomCarName, getRandomColor } from './garage-helpers';
 
 class Garage {
   private numberOfCars = 0;
@@ -79,6 +80,7 @@ class Garage {
     const updateButton = getElement(`.${GARAGE_STYLE.updateButton[0]}`, this.updateCarForm);
     createButton.addEventListener('click', () => this.createCar());
     updateButton.addEventListener('click', () => this.updateCar());
+    this.generateButton.addEventListener('click', () => this.generateCar());
     this.prevButton.addEventListener('click', () => this.setGarageContent());
     this.nextButton.addEventListener('click', () => this.setGarageContent());
     this.items.addEventListener('click', (e) => {
@@ -154,6 +156,15 @@ class Garage {
       carElement.remove();
       this.setNumberOfCars(this.numberOfCars - 1);
     });
+  }
+
+  private generateCar(): void {
+    for (let i = 0; i < NUMBER_OF_GENERETED_CARS; i += 1) {
+      const name = getRandomCarName();
+      const color = getRandomColor();
+      createCarAPI({ name, color });
+    }
+    this.setGarageContent();
   }
 
   private setNumberOfCars(numberOfCars: number): void {
