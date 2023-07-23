@@ -79,6 +79,8 @@ class Garage {
     const updateButton = getElement(`.${GARAGE_STYLE.updateButton[0]}`, this.updateCarForm);
     createButton.addEventListener('click', () => this.createCar());
     updateButton.addEventListener('click', () => this.updateCar());
+    this.prevButton.addEventListener('click', () => this.setGarageContent());
+    this.nextButton.addEventListener('click', () => this.setGarageContent());
     this.items.addEventListener('click', (e) => {
       const { target } = e;
       if (target && target instanceof HTMLElement) {
