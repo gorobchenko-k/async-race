@@ -1,4 +1,4 @@
-import { CarData, CarResponse } from '../../../types';
+import { CarData, CarResponse, EngineResponse } from '../../../types';
 
 const BASE_LINK = 'http://127.0.0.1:3000';
 
@@ -45,4 +45,20 @@ async function deleteCarAPI(id: string): Promise<void> {
   });
 }
 
-export { getCarAPI, getCarsAPI, createCarAPI, updateCarAPI, deleteCarAPI };
+async function startOrStopEngineAPI(id: string, status: 'started' | 'stopped'): Promise<EngineResponse> {
+  const response = await fetch(`${BASE_LINK}/engine?id=${id}&status=${status}`, {
+    method: 'PATCH',
+  });
+
+  return response.json();
+}
+
+async function switchEngineAPI(id: string, status = 'drive'): Promise<{ success: boolean }> {
+  const response = await fetch(`${BASE_LINK}/engine?id=${id}&status=${status}`, {
+    method: 'PATCH',
+  }).catch();
+
+  return response.status === 200 ? response.json() : { success: false };
+}
+
+export { getCarAPI, getCarsAPI, createCarAPI, updateCarAPI, deleteCarAPI, startOrStopEngineAPI, switchEngineAPI };

@@ -2,7 +2,15 @@ import './garage.css';
 import { createElement, getElement } from '../../../helpers';
 import { GARAGE_STYLE, GARAGE_TEXT, LIMIT_PER_PAGE, NUMBER_OF_GENERETED_CARS } from './garage-const';
 import { Pagination } from '../../pagination/pagination';
-import { getCarAPI, getCarsAPI, createCarAPI, updateCarAPI, deleteCarAPI } from './garage-api';
+import {
+  getCarAPI,
+  getCarsAPI,
+  createCarAPI,
+  updateCarAPI,
+  deleteCarAPI,
+  startOrStopEngineAPI,
+  switchEngineAPI,
+} from './garage-api';
 import { Car } from '../../car/car';
 import { getRandomCarName, getRandomColor } from './garage-helpers';
 
@@ -30,6 +38,8 @@ class Garage {
   private items = createElement('div', GARAGE_STYLE.items);
 
   private pagination = new Pagination(LIMIT_PER_PAGE, this.currentPage, this.prevButton, this.nextButton);
+
+  private idAnimations: Record<string, number> = {};
 
   constructor() {
     this.createGarage();
@@ -89,6 +99,8 @@ class Garage {
         const carElement = target.closest<HTMLElement>('.car');
         if (carElement && target.classList.contains('car__select')) this.selectCar(carElement);
         if (carElement && target.classList.contains('car__remove')) this.deleteCar(carElement);
+        if (carElement && target.classList.contains('car__start')) this.startEngine(carElement);
+        if (carElement && target.classList.contains('car__stop')) this.stopEngine(carElement);
       }
     });
   }
@@ -165,6 +177,63 @@ class Garage {
       createCarAPI({ name, color });
     }
     this.setGarageContent();
+  }
+
+  private startEngine(carElement: HTMLElement): void {
+    const startButton = getElement<HTMLButtonElement>('.car__start', carElement);
+    const stopButton = getElement<HTMLButtonElement>('.car__stop', carElement);
+    const carId = carElement.getAttribute('carid');
+
+    startButton.disabled = true;
+    stopButton.disabled = false;
+
+    if (!carId) throw new Error('carId is null');
+
+    startOrStopEngineAPI(carId, 'started').then((carData) => {
+      const duration = carData.distance / carData.velocity;
+      const carImage = getElement('.car__image', carElement);
+
+      this.animationCar(carId, duration, function draw(progress: number): void {
+        carImage.style.transform = `translateX(${`${progress * 76}vw`})`;
+      });
+
+      switchEngineAPI(carId).then((carDriveData) => {
+        if (!carDriveData.success) {
+          cancelAnimationFrame(this.idAnimations[carId]);
+        }
+      });
+    });
+  }
+
+  private animationCar(carId: string, duration: number, draw: (process: number) => void): void {
+    const startTime = performance.now();
+    const step = (timestamp: number): void => {
+      const progress = (timestamp - startTime) / duration;
+      draw(progress);
+
+      if (progress < 1) {
+        this.idAnimations[carId] = requestAnimationFrame(step);
+      }
+    };
+    this.idAnimations[carId] = requestAnimationFrame(step);
+  }
+
+  private stopEngine(carElement: HTMLElement): void {
+    const startButton = getElement<HTMLButtonElement>('.car__start', carElement);
+    const stopButton = getElement<HTMLButtonElement>('.car__stop', carElement);
+    const carId = carElement.getAttribute('carid');
+
+    startButton.disabled = false;
+    stopButton.disabled = true;
+
+    if (!carId) throw new Error('carId is null');
+
+    startOrStopEngineAPI(carId, 'stopped').then(() => {
+      const carImage = getElement('.car__image', carElement);
+
+      window.cancelAnimationFrame(this.idAnimations[carId]);
+      carImage.style.transform = 'translateX(0)';
+    });
   }
 
   private setNumberOfCars(numberOfCars: number): void {

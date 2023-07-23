@@ -9,4 +9,9 @@ type CarData = {
   color: string;
 };
 
-export { CarResponse, CarData };
+type EngineResponse = {
+  velocity: number;
+  distance: number;
+};
+
+export { CarResponse, CarData, EngineResponse };
