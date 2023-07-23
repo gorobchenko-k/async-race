@@ -39,4 +39,10 @@ async function updateCarAPI(id: string, dataParams: CarData): Promise<CarRespons
   return response.json();
 }
 
-export { getCarAPI, getCarsAPI, createCarAPI, updateCarAPI };
+async function deleteCarAPI(id: string): Promise<void> {
+  await fetch(`${BASE_LINK}/garage/${id}`, {
+    method: 'DELETE',
+  });
+}
+
+export { getCarAPI, getCarsAPI, createCarAPI, updateCarAPI, deleteCarAPI };

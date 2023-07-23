@@ -2,7 +2,7 @@ import './garage.css';
 import { createElement, getElement } from '../../../helpers';
 import { GARAGE_STYLE, GARAGE_TEXT, LIMIT_PER_PAGE } from './garage-const';
 import { Pagination } from '../../pagination/pagination';
-import { getCarAPI, getCarsAPI, createCarAPI, updateCarAPI } from './garage-api';
+import { getCarAPI, getCarsAPI, createCarAPI, updateCarAPI, deleteCarAPI } from './garage-api';
 import { Car } from '../../car/car';
 
 class Garage {
@@ -84,6 +84,7 @@ class Garage {
       if (target && target instanceof HTMLElement) {
         const carElement = target.closest<HTMLElement>('.car');
         if (carElement && target.classList.contains('car__select')) this.selectCar(carElement);
+        if (carElement && target.classList.contains('car__remove')) this.deleteCar(carElement);
       }
     });
   }
@@ -141,6 +142,16 @@ class Garage {
     } else {
       this.updateCarForm.append('Enter the name of the car');
     }
+  }
+
+  private deleteCar(carElement: Element): void {
+    const carId = carElement.getAttribute('carid');
+    if (!carId) throw new Error('carId is null');
+
+    deleteCarAPI(carId).then(() => {
+      carElement.remove();
+      this.setNumberOfCars(this.numberOfCars - 1);
+    });
   }
 
   private setNumberOfCars(numberOfCars: number): void {
