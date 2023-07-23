@@ -1,8 +1,8 @@
 import './garage.css';
-import { createElement } from '../../../helpers';
+import { createElement, getElement } from '../../../helpers';
 import { GARAGE_STYLE, GARAGE_TEXT, LIMIT_PER_PAGE } from './garage-const';
 import { Pagination } from '../../pagination/pagination';
-import { getCarsAPI } from './garage-api';
+import { createCarAPI, getCarsAPI } from './garage-api';
 import { Car } from '../../car/car';
 
 class Garage {
@@ -33,6 +33,7 @@ class Garage {
   constructor() {
     this.createGarage();
     this.setGarageContent();
+    this.addButtonHandlers();
   }
 
   public createGarage(): HTMLElement {
@@ -71,6 +72,29 @@ class Garage {
       });
       this.setNumberOfCars(numberOfCars);
     });
+  }
+
+  private addButtonHandlers(): void {
+    const createButton = getElement(`.${GARAGE_STYLE.createButton[0]}`, this.createCarForm);
+    createButton.addEventListener('click', () => this.createCar());
+  }
+
+  private createCar(): void {
+    const inputName = getElement<HTMLInputElement>(`.${GARAGE_STYLE.createInput}`, this.createCarForm);
+    const inputColor = getElement<HTMLInputElement>(`.${GARAGE_STYLE.createInputColor}`, this.createCarForm);
+    if (inputName.value) {
+      createCarAPI({
+        name: inputName.value,
+        color: inputColor.value,
+      }).then(() => {
+        this.setGarageContent();
+        this.setNumberOfCars(this.numberOfCars + 1);
+        inputName.value = '';
+        inputColor.value = '#000000';
+      });
+    } else {
+      this.createCarForm.append('Enter the name of the car');
+    }
   }
 
   private setNumberOfCars(numberOfCars: number): void {

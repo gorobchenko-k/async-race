@@ -4,4 +4,9 @@ type CarResponse = {
   id: number;
 };
 
-export { CarResponse };
+type CarData = {
+  name: string;
+  color: string;
+};
+
+export { CarResponse, CarData };
