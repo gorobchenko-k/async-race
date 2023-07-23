@@ -2,7 +2,7 @@ import './garage.css';
 import { createElement, getElement } from '../../../helpers';
 import { GARAGE_STYLE, GARAGE_TEXT, LIMIT_PER_PAGE } from './garage-const';
 import { Pagination } from '../../pagination/pagination';
-import { createCarAPI, getCarsAPI } from './garage-api';
+import { getCarAPI, getCarsAPI, createCarAPI, updateCarAPI } from './garage-api';
 import { Car } from '../../car/car';
 
 class Garage {
@@ -76,7 +76,16 @@ class Garage {
 
   private addButtonHandlers(): void {
     const createButton = getElement(`.${GARAGE_STYLE.createButton[0]}`, this.createCarForm);
+    const updateButton = getElement(`.${GARAGE_STYLE.updateButton[0]}`, this.updateCarForm);
     createButton.addEventListener('click', () => this.createCar());
+    updateButton.addEventListener('click', () => this.updateCar());
+    this.items.addEventListener('click', (e) => {
+      const { target } = e;
+      if (target && target instanceof HTMLElement) {
+        const carElement = target.closest<HTMLElement>('.car');
+        if (carElement && target.classList.contains('car__select')) this.selectCar(carElement);
+      }
+    });
   }
 
   private createCar(): void {
@@ -94,6 +103,43 @@ class Garage {
       });
     } else {
       this.createCarForm.append('Enter the name of the car');
+    }
+  }
+
+  private selectCar(carElement: Element): void {
+    const carId = carElement.getAttribute('carid');
+    if (!carId) throw new Error('carId is null');
+
+    getCarAPI(carId).then((carData) => {
+      const inputName = getElement<HTMLInputElement>(`.${GARAGE_STYLE.updateInput}`, this.updateCarForm);
+      const inputColor = getElement<HTMLInputElement>(`.${GARAGE_STYLE.updateInputColor}`, this.updateCarForm);
+      inputName.value = carData.name;
+      inputColor.value = carData.color;
+      getElement(`.${GARAGE_STYLE.updateCarId}`).textContent = carId;
+    });
+  }
+
+  private updateCar(): void {
+    const carId = getElement(`.${GARAGE_STYLE.updateCarId}`, this.updateCarForm).textContent;
+    const inputName = getElement<HTMLInputElement>(`.${GARAGE_STYLE.updateInput}`, this.updateCarForm);
+    const inputColor = getElement<HTMLInputElement>(`.${GARAGE_STYLE.updateInputColor}`, this.updateCarForm);
+    if (!carId) throw new Error('carId is null');
+
+    if (inputName.value) {
+      updateCarAPI(carId, {
+        name: inputName.value,
+        color: inputColor.value,
+      }).then((carData) => {
+        const carElement = getElement(`.car[carid="${carData.id}"]`, this.items);
+        const name = getElement('.car__name', carElement);
+        const image = getElement('.car__image svg', carElement);
+        name.textContent = carData.name;
+        image.style.fill = carData.color;
+        inputName.value = '';
+        inputColor.value = '#000000';
+      });
+    } else {
+      this.updateCarForm.append('Enter the name of the car');
     }
   }
 
