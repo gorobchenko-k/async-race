@@ -39,7 +39,9 @@ class Garage {
 
   private items = createElement('div', GARAGE_STYLE.items);
 
-  private pagination = new Pagination(LIMIT_PER_PAGE, this.currentPage, this.prevButton, this.nextButton);
+  private pagination = new Pagination(LIMIT_PER_PAGE, this.currentPage, this.prevButton, this.nextButton, () => {
+    this.setGarageContent();
+  });
 
   private idAnimations: Record<string, number> = {};
 
