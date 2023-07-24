@@ -68,6 +68,7 @@ class Winner {
         tr.innerHTML = trContent;
         this.tbody.append(tr);
       });
+      getElements('.sort span').forEach((sortButton) => sortButton.classList.remove('active'));
       this.setNumberOfWinners(numberOfWinners);
     });
   }

@@ -26,7 +26,7 @@ class Header {
     const menu = createElement('ul', HEADER_STYLE.menu);
 
     HEADER_TEXT.links.forEach((linkText) => {
-      const link = createElement('li', HEADER_STYLE.link, linkText);
+      const link = createElement('li', [...HEADER_STYLE.link, `${linkText.toLowerCase()}-link`], linkText);
       link.addEventListener('click', () => this.linkHandler(linkText));
       menu.append(link);
     });

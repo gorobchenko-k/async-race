@@ -1,4 +1,4 @@
-import { createElement } from '../../helpers';
+import { createElement, getElement } from '../../helpers';
 import { Garage } from './garage/garage';
 import './main.css';
 import { Winner } from './winner/winner';
@@ -15,6 +15,7 @@ class Main {
 
   constructor() {
     this.createMain();
+    this.addHandler();
   }
 
   private createMain(): void {
@@ -23,6 +24,11 @@ class Main {
     container.append(this.garagePage.garage, this.winnerPage.winner);
     main.append(container);
     document.body.append(main);
+  }
+
+  private addHandler(): void {
+    const headerWinnerButton = getElement('.winner-link');
+    headerWinnerButton.addEventListener('click', () => this.winnerPage.setWinnerContent());
   }
 }
 
