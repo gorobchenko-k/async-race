@@ -1,4 +1,5 @@
 const GARAGE_STYLE = {
+  garage: ['garage', 'page'],
   createCar: ['garage__create-car', 'form'],
   createInput: ['garage__input-create'],
   createInputColor: ['garage__input-color-create'],

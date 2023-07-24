@@ -19,7 +19,7 @@ import { getWinnerAPI, createWinnerAPI, updateWinnerAPI } from '../winner/winner
 class Garage {
   private numberOfCars = 0;
 
-  public garage = createElement('div', ['garage', 'page']);
+  public garage = createElement('div', GARAGE_STYLE.garage);
 
   private createCarForm = this.createForm('create');
 
