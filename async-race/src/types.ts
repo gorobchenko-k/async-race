@@ -20,4 +20,10 @@ type WinnerResponse = {
   time: number;
 };
 
-export { CarResponse, CarData, EngineResponse, WinnerResponse };
+type WinnersResponse = WinnerResponse & {
+  car: CarResponse;
+};
+
+type OrderParams = 'ASC' | 'DESC';
+
+export { CarResponse, CarData, EngineResponse, WinnerResponse, WinnersResponse, OrderParams };
