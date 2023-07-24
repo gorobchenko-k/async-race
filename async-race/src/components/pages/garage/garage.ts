@@ -130,7 +130,6 @@ class Garage {
         color: inputColor.value,
       }).then(() => {
         this.setGarageContent();
-        this.setNumberOfCars(this.numberOfCars + 1);
         inputName.value = '';
         inputColor.value = '#000000';
       });
@@ -181,8 +180,7 @@ class Garage {
     if (!carId) throw new Error('carId is null');
 
     deleteCarAPI(carId).then(() => {
-      carElement.remove();
-      this.setNumberOfCars(this.numberOfCars - 1);
+      this.setGarageContent();
     });
   }
 
