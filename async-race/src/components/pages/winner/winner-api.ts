@@ -49,4 +49,10 @@ async function updateWinnerAPI(id: string, dataParams: WinnerResponse): Promise<
   return response.json();
 }
 
-export { getWinnerAPI, getWinnersAPI, createWinnerAPI, updateWinnerAPI };
+async function deleteWinnerAPI(id: string): Promise<void> {
+  await fetch(`${BASE_LINK}/winners/${id}`, {
+    method: 'DELETE',
+  });
+}
+
+export { getWinnerAPI, getWinnersAPI, createWinnerAPI, updateWinnerAPI, deleteWinnerAPI };

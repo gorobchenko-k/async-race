@@ -14,7 +14,7 @@ import {
 import { Car } from '../../car/car';
 import { getRandomCarName, getRandomColor } from './garage-helpers';
 import { Modal } from '../../modal/modal';
-import { getWinnerAPI, createWinnerAPI, updateWinnerAPI } from '../winner/winner-api';
+import { getWinnerAPI, createWinnerAPI, updateWinnerAPI, deleteWinnerAPI } from '../winner/winner-api';
 
 class Garage {
   private numberOfCars = 0;
@@ -181,6 +181,7 @@ class Garage {
 
     deleteCarAPI(carId).then(() => {
       this.setGarageContent();
+      deleteWinnerAPI(carId);
     });
   }
 
