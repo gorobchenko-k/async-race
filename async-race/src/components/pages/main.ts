@@ -20,7 +20,7 @@ class Main {
   private createMain(): void {
     const main = createElement('main', MAIN_STYLE.main);
     const container = createElement('div', MAIN_STYLE.container);
-    container.append(this.garagePage.createGarage(), this.winnerPage.createWinner());
+    container.append(this.garagePage.garage, this.winnerPage.winner);
     main.append(container);
     document.body.append(main);
   }

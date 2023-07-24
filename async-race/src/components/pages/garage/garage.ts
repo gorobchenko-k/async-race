@@ -19,6 +19,8 @@ import { getWinnerAPI, createWinnerAPI, updateWinnerAPI } from '../winner/winner
 class Garage {
   private numberOfCars = 0;
 
+  public garage = createElement('div', ['garage', 'page']);
+
   private createCarForm = this.createForm('create');
 
   private updateCarForm = this.createForm('update');
@@ -53,8 +55,7 @@ class Garage {
     this.addButtonHandlers();
   }
 
-  public createGarage(): HTMLElement {
-    const garage = createElement('div', ['garage', 'page']);
+  private createGarage(): void {
     const buttons = createElement('div', GARAGE_STYLE.buttons);
     const title = createElement('h2', GARAGE_STYLE.title, GARAGE_TEXT.title);
     const pageNumber = createElement('h3', GARAGE_STYLE.pageNumber, GARAGE_TEXT.pageNumber);
@@ -66,8 +67,15 @@ class Garage {
     title.append(this.numberOfItems);
     pageNumber.append(this.currentPage);
     paginationButtons.append(this.prevButton, this.nextButton);
-    garage.append(this.createCarForm, this.updateCarForm, buttons, title, pageNumber, this.items, paginationButtons);
-    return garage;
+    this.garage.append(
+      this.createCarForm,
+      this.updateCarForm,
+      buttons,
+      title,
+      pageNumber,
+      this.items,
+      paginationButtons
+    );
   }
 
   private createForm(formName: 'create' | 'update'): HTMLDivElement {
