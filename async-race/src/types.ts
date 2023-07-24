@@ -14,4 +14,10 @@ type EngineResponse = {
   distance: number;
 };
 
-export { CarResponse, CarData, EngineResponse };
+type WinnerResponse = {
+  id?: number;
+  wins: number;
+  time: number;
+};
+
+export { CarResponse, CarData, EngineResponse, WinnerResponse };

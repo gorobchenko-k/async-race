@@ -13,6 +13,8 @@ import {
 } from './garage-api';
 import { Car } from '../../car/car';
 import { getRandomCarName, getRandomColor } from './garage-helpers';
+import { Modal } from '../../modal/modal';
+import { getWinnerAPI, createWinnerAPI, updateWinnerAPI } from '../winner/winner-api';
 
 class Garage {
   private numberOfCars = 0;
@@ -40,6 +42,8 @@ class Garage {
   private pagination = new Pagination(LIMIT_PER_PAGE, this.currentPage, this.prevButton, this.nextButton);
 
   private idAnimations: Record<string, number> = {};
+
+  private isFirstCar: boolean = true;
 
   constructor() {
     this.createGarage();
@@ -216,6 +220,15 @@ class Garage {
       if (progress < 1) {
         this.idAnimations[carId] = requestAnimationFrame(step);
       }
+
+      if (progress > 1 && this.raceButton.hasAttribute('disabled')) {
+        if (this.isFirstCar) {
+          const time = +(duration / 1000).toFixed(2);
+          this.isFirstCar = false;
+          this.showResult(carId, time);
+          this.addWinner(carId, time);
+        }
+      }
     };
     this.idAnimations[carId] = requestAnimationFrame(step);
   }
@@ -239,6 +252,7 @@ class Garage {
   }
 
   private startRace(): void {
+    this.isFirstCar = true;
     this.raceButton.disabled = true;
     this.resetButton.disabled = false;
     getCarsAPI(this.pagination.currentPage, LIMIT_PER_PAGE).then(({ cars }) => {
@@ -257,6 +271,34 @@ class Garage {
         const carElement = getElement(`.car[carid="${carData.id}"]`);
         this.stopEngine(carElement);
       });
+    });
+  }
+
+  private showResult(carId: string, time: number): void {
+    getCarAPI(carId).then((carData) => {
+      const modal = new Modal();
+      modal.buildModal(`${carData.name} went first [${time}s]`);
+    });
+  }
+
+  private addWinner(carId: string, time: number): void {
+    getWinnerAPI(carId).then((winnerData) => {
+      if (winnerData) {
+        const bestTime = time < winnerData.time ? time : winnerData.time;
+        const winner = {
+          id: +carId,
+          wins: winnerData.wins + 1,
+          time: bestTime,
+        };
+        updateWinnerAPI(carId, winner);
+      } else {
+        const winner = {
+          id: +carId,
+          wins: 1,
+          time,
+        };
+        createWinnerAPI(winner);
+      }
     });
   }
 
