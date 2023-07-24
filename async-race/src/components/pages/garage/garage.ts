@@ -91,6 +91,8 @@ class Garage {
     createButton.addEventListener('click', () => this.createCar());
     updateButton.addEventListener('click', () => this.updateCar());
     this.generateButton.addEventListener('click', () => this.generateCar());
+    this.raceButton.addEventListener('click', () => this.startRace());
+    this.resetButton.addEventListener('click', () => this.resetRace());
     this.prevButton.addEventListener('click', () => this.setGarageContent());
     this.nextButton.addEventListener('click', () => this.setGarageContent());
     this.items.addEventListener('click', (e) => {
@@ -231,8 +233,30 @@ class Garage {
     startOrStopEngineAPI(carId, 'stopped').then(() => {
       const carImage = getElement('.car__image', carElement);
 
-      window.cancelAnimationFrame(this.idAnimations[carId]);
+      cancelAnimationFrame(this.idAnimations[carId]);
       carImage.style.transform = 'translateX(0)';
+    });
+  }
+
+  private startRace(): void {
+    this.raceButton.disabled = true;
+    this.resetButton.disabled = false;
+    getCarsAPI(this.pagination.currentPage, LIMIT_PER_PAGE).then(({ cars }) => {
+      cars.forEach((carData) => {
+        const carElement = getElement(`.car[carid="${carData.id}"]`);
+        this.startEngine(carElement);
+      });
+    });
+  }
+
+  private resetRace(): void {
+    this.raceButton.disabled = false;
+    this.resetButton.disabled = true;
+    getCarsAPI(this.pagination.currentPage, LIMIT_PER_PAGE).then(({ cars }) => {
+      cars.forEach((carData) => {
+        const carElement = getElement(`.car[carid="${carData.id}"]`);
+        this.stopEngine(carElement);
+      });
     });
   }
 
